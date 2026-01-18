@@ -55,7 +55,7 @@ if (!pk_is_checked('use_widgets_block')) {
     pk_off_widgets_block();
 }
 
-//獲取評論等級
+//取得評論等級
 function pk_the_author_class_out($count)
 {
     if ($count <= 0) {
@@ -114,7 +114,7 @@ function pk_the_author_class($echo = true, $in_comment = null)
     echo $res;
 }
 
-//獲取 Gravatar 頭像
+//取得 Gravatar 頭像
 function pk_get_gravatar($email, $echo = true)
 {
     $link = get_avatar_url($email);
@@ -124,7 +124,7 @@ function pk_get_gravatar($email, $echo = true)
     echo $link;
 }
 
-//獲取文章分類連結
+//取得文章分類連結
 function get_post_category_link($class = '', $icon = '', $cid = null, $default = null, $index = 0)
 {
     return get_post_category_link_exec(false, $class, $icon, $cid, $default, $index);
@@ -160,7 +160,7 @@ function get_post_category_link_exec($all = true, $class = '', $icon = '', $cid 
     return '<a class="' . $class . '" href="javascript:void(0)">' . $icon . $default . '</a>';
 }
 
-//獲取文章標籤
+//取得文章標籤
 function get_post_tags($class = '', $item_class = '')
 {
     global $puock_colors_name;
@@ -204,12 +204,12 @@ function pk_get_post_date()
             $res = __('六天前',PUOCK);
             break;
         default:
-            $res = date('Y-m-d', $time);
+            $res = get_the_date(get_option('date_format'));
     }
     echo $res;
 }
 
-//獲取隨機的 bootstrap 的顏色表示
+//取得隨機的 bootstrap 的顏色表示
 function pk_get_color_tag($ex = array())
 {
     global $puock_colors_name;
@@ -224,14 +224,13 @@ function pk_get_color_tag($ex = array())
 
 function get_smiley_codes()
 {
-    //todo 本地化翻譯
     return array(
-        ":?:" => "疑問", ":razz:" => "調皮", ":sad:" => "難過", ":evil:" => "摳鼻", ":naughty:" => "頑皮",
-        ":!:" => "嚇", ":smile:" => "微笑", ":oops:" => "憨笑", ":neutral:" => "親親", ":cry:" => "大哭", ":mrgreen:" => "呲牙",
-        ":grin:" => "壞笑", ":eek:" => "驚訝", ":shock:" => "發呆", ":???:" => "撇嘴", ":cool:" => "酷", ":lol:" => "偷笑",
-        ":mad:" => "咒罵", ":twisted:" => "發怒", ":roll:" => "白眼", ":wink:" => "鼓掌", ":idea:" => "想法", ":despise:" => "蔑視",
-        ":celebrate:" => "慶祝", ":watermelon:" => "西瓜", ":xmas:" => "聖誕", ":warn:" => "警告", ":rainbow:" => "彩虹",
-        ":loveyou:" => "愛你", ":love:" => "愛", ":beer:" => "啤酒",
+        ":?:" => __("疑問", PUOCK), ":razz:" => __("調皮", PUOCK), ":sad:" => __("難過", PUOCK), ":evil:" => __("摳鼻", PUOCK), ":naughty:" => __("頑皮", PUOCK),
+        ":!:" => __("嚇", PUOCK), ":smile:" => __("微笑", PUOCK), ":oops:" => __("憨笑", PUOCK), ":neutral:" => __("親親", PUOCK), ":cry:" => __("大哭", PUOCK), ":mrgreen:" => __("呲牙", PUOCK),
+        ":grin:" => __("壞笑", PUOCK), ":eek:" => __("驚訝", PUOCK), ":shock:" => __("發呆", PUOCK), ":???:" => __("撇嘴", PUOCK), ":cool:" => __("酷", PUOCK), ":lol:" => __("偷笑", PUOCK),
+        ":mad:" => __("咒駡", PUOCK), ":twisted:" => __("發怒", PUOCK), ":roll:" => __("白眼", PUOCK), ":wink:" => __("鼓掌", PUOCK), ":idea:" => __("想法", PUOCK), ":despise:" => __("蔑視", PUOCK),
+        ":celebrate:" => __("慶祝", PUOCK), ":watermelon:" => __("西瓜", PUOCK), ":xmas:" => __("聖誕", PUOCK), ":warn:" => __("警告", PUOCK), ":rainbow:" => __("彩虹", PUOCK),
+        ":loveyou:" => __("愛你", PUOCK), ":love:" => __("愛", PUOCK), ":beer:" => __("啤酒", PUOCK),
     );
 }
 
@@ -292,33 +291,68 @@ function smilies_custom_button($context)
         <span>' . __('新增表情', PUOCK) . '</span> 
         </a><div id="insert-smiley-wrap" class="pk-media-wrap" style="display: none">' . get_wpsmiliestrans() . '</div>';
 }
-
-function get_post_images($_post = null)
+/**
+ * 取得文章封面圖：優先順序 = 特色圖 > 內容第一張圖（支援 Markdown）> 隨機預設圖
+ *
+ * @param int|WP_Post|null $_post 文章 ID 或物件，null 則使用全域 $post
+ * @return string 圖片 URL
+ */
+function get_post_images($_post = null): string
 {
     global $post;
-    if ($_post != null) {
-        $post = $_post;
+
+    // 1. 取得文章物件
+    $post_obj = $_post ? get_post($_post) : $post;
+    if (!$post_obj) {
+        return get_random_default_image();
     }
-    $post_id = $post->ID;
-    // 如果有封面圖取封面圖
-    if (has_post_thumbnail()) {
-        $res = get_the_post_thumbnail_url($post, 'large');
-        if ($res != null) {
-            return $res;
+
+    $post_id = $post_obj->ID;
+    $content = $post_obj->post_content;
+
+    // 2. 優先：特色圖（支援 attachment 和 外部連結）
+    if (has_post_thumbnail($post_id)) {
+        $featured_url = get_the_post_thumbnail_url($post_id, 'large');
+        if ($featured_url) {
+            return esc_url($featured_url);
         }
     }
-    if ($post_id == null && $post) {
-        $content = $post->post_content;
-    } else {
-        $content = get_post($post_id)->post_content;
+
+    // 可選：支持外部特色圖（如果你用了之前“external_thumbnail_url”的方案）
+    $external_thumb = get_post_meta($post_id, 'external_thumbnail_url', true);
+    if ($external_thumb) {
+        return esc_url($external_thumb);
     }
-    preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $content, $matches);
-    if ($matches && $matches[1]) {
-        $res = $matches[1][0];
-    } else {
-        $res = get_template_directory_uri() . '/assets/img/random/' . mt_rand(1, 8) . '.jpg';
+
+    // 3. 次選：從內容提取第一張圖（支持 Markdown 和 HTML）
+    $first_image = null;
+
+    // 匹配 Markdown 圖片：![alt](url)
+    if (preg_match('/!\[[^\]]*\]\(\s*([^\s\)]+?)\s*([\'"][^\'"]*?[\'"])?\s*\)/i', $content, $matches)) {
+        $first_image = trim($matches[1]);
     }
-    return $res;
+    // 如果沒找到 Markdown 圖片，再匹配 HTML 圖片
+    elseif (preg_match('/<img[^>]+src=[\'"]([^\'"]+)[\'"]/i', $content, $matches)) {
+        $first_image = $matches[1];
+    }
+
+    if ($first_image && filter_var($first_image, FILTER_VALIDATE_URL)) {
+        return esc_url($first_image);
+    }
+
+    // 4. 最後：返回隨機預設圖
+    return get_random_default_image();
+}
+
+/**
+ * 取得隨機預設圖片
+ *
+ * @return string 預設圖 URL
+ */
+function get_random_default_image(): string
+{
+    $img_dir = get_template_directory_uri() . '/assets/img/random/';
+    return esc_url($img_dir . mt_rand(1, 8) . '.jpg');
 }
 
 //分頁功能
@@ -363,7 +397,7 @@ if (!function_exists('pk_paging')) {
     }
 }
 
-//獲取麵包屑導航
+//取得麵包屑導航
 function pk_breadcrumbs()
 {
     global $cat;
@@ -411,7 +445,7 @@ function pk_breadcrumbs()
     } else if (!empty($custom_seo_title)) {
         $out .= '<li class="breadcrumb-item active " aria-current="page">' . $custom_seo_title . '</li>';
     } else if (is_404()) {
-        $out .= '<li class="breadcrumb-item active " aria-current="page">' . __('你瀏覽的資源不存在', PUOCK) . '</li>';
+        $out .= '<li class="breadcrumb-item active " aria-current="page">' . __('您瀏覽的資源不存在', PUOCK) . '</li>';
     }
     $out .= '</div></nav></ol>';
     return $out;
@@ -425,7 +459,7 @@ function pk_breadcrumbs()
  * @date 2024-03-19
  */
 function pk_icon_mate() {
-    //獲取 icon 地址
+    //取得 icon 地址
     $pk_icon = pk_get_option('favicon');
     //未設定返回空
     if ($pk_icon === '') return '';
@@ -456,9 +490,9 @@ function pk_get_seo_title() {
     // 分頁情況
     $pk_paged_title = '';
     if (get_query_var('paged')) {
-        $pk_paged_title = $pk_title_conn . '第' . get_query_var('paged') . '頁';
+        $pk_paged_title = $pk_title_conn . sprintf(__('第 %d 頁', PUOCK), get_query_var('paged'));
     }
-    // 獲取 SEO 設定
+    // 取得 SEO 設定
     $pk_custom_seo_title = pk_get_custom_seo()['title'] ?? '';
     // 輸出內容
     $pk_title = '';
@@ -475,30 +509,30 @@ function pk_get_seo_title() {
             $pk_title .= $pk_blog_name . $pk_paged_title;
         }
     } else if (is_search()) {
-        $pk_title .= '搜尋「' . $_REQUEST['s'] . '」的結果' . $pk_common_end;
+        $pk_title .= sprintf(__('搜尋「%s」的結果', PUOCK), esc_html($_REQUEST['s'])) . $pk_common_end;
     } else if (is_single() || is_page()) {
         $pk_title .= single_post_title('', false) . $pk_common_end;
     } else if (is_year()) {
-        $pk_title .= get_the_time('Y 年') . '的所有文章' . $pk_common_end;
+        $pk_title .= sprintf(__('%s 年的所有文章', PUOCK), get_the_time('Y')) . $pk_common_end;
     } else if (is_month()) {
-        $pk_title .= get_the_time('m') . '的所有文章' . $pk_common_end;
+        $pk_title .= sprintf(__('%s月的所有文章', PUOCK), get_the_time('m')) . $pk_common_end;
     } else if (is_day()) {
-        $pk_title .= get_the_time('Y 年 m 月 d 日') . '的所有文章' . $pk_common_end;
+        $pk_title .= sprintf(__('%s 年 %s 月 %s 日的所有文章', PUOCK), get_the_time('Y'), get_the_time('m'), get_the_time('d')) . $pk_common_end;
     } else if (is_author()) {
-        $pk_title .= '作者：' . get_the_author() . $pk_common_end;
+        $pk_title .= sprintf(__('作者：%s', PUOCK), get_the_author()) . $pk_common_end;
     } else if (is_category()) {
         $pk_title .= single_cat_title('', false) . $pk_common_end;
     } else if (is_tag()) {
         $pk_title .= single_tag_title('', false) . $pk_common_end;
     } else if (is_404()) {
-        $pk_title .= '你瀏覽的資源不存在' . $pk_common_end;
+        $pk_title .= __('您瀏覽的資源不存在', PUOCK) . $pk_common_end;
     } else {
         $pk_title .= $pk_blog_name . $pk_paged_title;
     }
     return '<title>'.$pk_title.'</title>';
 }
 
-//獲取閱讀數量
+//取得閱讀數量
 function pk_get_post_views()
 {
     if (function_exists('the_views')) {
@@ -700,4 +734,3 @@ if (is_admin()) {
     // 線上更新支援
     pk_update();
 }
-

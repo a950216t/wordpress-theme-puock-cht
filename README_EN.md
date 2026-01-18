@@ -79,12 +79,14 @@ Please go to the [release version](https://github.com/Licoy/wordpress-theme-puoc
 - [x] More features, waiting for your [proposal](https://github.com/Licoy/wordpress-theme-puock/issues)
 ## Documentation
 - Theme use document: [Use immediately](https://www.licoy.cn/puock-doc.html)
+- **Feature Usage Guide: [View Detailed Tutorial](./USAGE_EN.md)** (Detailed instructions for friendship links, alert boxes, and more)
+- Issue Feedback: [Submit Issue](https://github.com/Licoy/wordpress-theme-puock/issues)
+- Community Group: [Join Group](https://licoy.cn/go/puock-update.php?r=qq_qun)
 ## Support
 - Reward theme to support：[Click me in](https://licoy.cn/puock-theme-sponsor.html)
 ## Thanks
 - [Jetbrains](https://www.jetbrains.com/?from=wordpress-theme-puock)
-- [Cloudflare](https://www.cloudflare.com/?from=wordpress-theme-puock)
-- <a href="http://idc.daozhiyun.cn"><img src="https://sv.png.pub/imgs/2024/06/26/fd4efab4bfd2bb9e.png" width="100"></a>
+
 ## License
 - [GPL 3.0](./LICENSE)
 - Please abide by the open source agreement and keep the author's signature at the bottom of the subject

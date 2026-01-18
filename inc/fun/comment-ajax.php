@@ -1,6 +1,7 @@
 <?php
 
 use function donatj\UserAgent\parse_user_agent;
+
 function pk_comment_err($msg, $refresh_code = true)
 {
     $protocol = $_SERVER['SERVER_PROTOCOL'];
@@ -18,14 +19,16 @@ function pk_comment_err($msg, $refresh_code = true)
     exit();
 }
 
-function pk_check_comment_for_chinese($comment) {
+function pk_check_comment_for_chinese($comment)
+{
     $pattern = '/[\x{4e00}-\x{9fa5}]/u';
     if (!preg_match($pattern, $comment)) {
         pk_comment_err('您的評論必須包含至少一個中文字元');
     }
     return $comment;
 }
-if(pk_is_checked('vd_comment_need_chinese')){
+
+if (pk_is_checked('vd_comment_need_chinese')) {
     add_filter('pre_comment_content', 'pk_check_comment_for_chinese');
 }
 
@@ -135,17 +138,19 @@ function pk_comment_ajax()
 
     if (empty($comment_content)) pk_comment_err('評論內容不能為空');
 
-    // 檢查重複評論功能
-    $query_params = [$comment_post_ID, $comment_author];
-    $dupe = "SELECT comment_ID FROM $wpdb->comments WHERE comment_post_ID = %d AND ( comment_author = %s ";
-    if ($comment_author_email) {
-        $dupe .= "OR comment_author_email = %s ";
-        $query_params[] = $comment_author_email;
-    }
-    $dupe .= ") AND comment_content = %s LIMIT 1";
-    $query_params[] = $comment_content;
-    if ($wpdb->get_var($wpdb->prepare($dupe, $query_params))) {
-        pk_comment_err('您已經發表過相同的評論了!');
+    // 檢查重複評論功能（根據主題設定決定是否啟用）
+    if (pk_is_checked('comment_duplicate_check')) {
+        $query_params = [$comment_post_ID, $comment_author];
+        $dupe = "SELECT comment_ID FROM $wpdb->comments WHERE comment_post_ID = %d AND ( comment_author = %s ";
+        if ($comment_author_email) {
+            $dupe .= "OR comment_author_email = %s ";
+            $query_params[] = $comment_author_email;
+        }
+        $dupe .= ") AND comment_content = %s LIMIT 1";
+        $query_params[] = $comment_content;
+        if ($wpdb->get_var($wpdb->prepare($dupe, $query_params))) {
+            pk_comment_err('您已經發表過相同的評論了！');
+        }
     }
 
     // 檢查評論時間
@@ -196,23 +201,23 @@ function pk_comment_ajax()
                     <p>' . get_comment_text($comment_id) . '</p>
                     ' . $comment_approved_str . '
                     <div class="comment-os c-sub">';
-                
-                if (pk_is_checked('comment_show_ua', true)):
-                    $commentUserAgent = parse_user_agent($comment->comment_agent);
-                    $commentOsIcon = pk_get_comment_ua_os_icon($commentUserAgent['platform']);
-                    $commentBrowserIcon = pk_get_comment_ua_os_icon($commentUserAgent['browser']);
-                    echo "<span class='mt10' title='{$commentUserAgent['platform']}'><i class='$commentOsIcon'></i>&nbsp;<span>{$commentUserAgent['platform']}&nbsp;</span></span>";
-                    echo "<span class='mt10' title='{$commentUserAgent['browser']} {$commentUserAgent['version']}'><i class='$commentBrowserIcon'></i>&nbsp;<span>{$commentUserAgent['browser']}</span></span>";
-                endif;
-                ?>
-                <?php
-                if (pk_is_checked('comment_show_ip', true)) {
-                    if (!pk_is_checked('comment_dont_show_owner_ip') || (pk_is_checked('comment_dont_show_owner_ip') && $comment->user_id != 1)) {
-                        $ip = pk_get_ip_region_str($comment->comment_author_IP);
-                        echo "<span class='mt10' title='IP'><i class='fa-solid fa-location-dot'></i>&nbsp;$ip</span>";
-                    }
-                }
-                
+
+    if (pk_is_checked('comment_show_ua', true)):
+        $commentUserAgent = parse_user_agent($comment->comment_agent);
+        $commentOsIcon = pk_get_comment_ua_os_icon($commentUserAgent['platform']);
+        $commentBrowserIcon = pk_get_comment_ua_os_icon($commentUserAgent['browser']);
+        echo "<span class='mt10' title='{$commentUserAgent['platform']}'><i class='$commentOsIcon'></i>&nbsp;<span>{$commentUserAgent['platform']}&nbsp;</span></span>";
+        echo "<span class='mt10' title='{$commentUserAgent['browser']} {$commentUserAgent['version']}'><i class='$commentBrowserIcon'></i>&nbsp;<span>{$commentUserAgent['browser']}</span></span>";
+    endif;
+    ?>
+    <?php
+    if (pk_is_checked('comment_show_ip', true)) {
+        if (!pk_is_checked('comment_dont_show_owner_ip') || (pk_is_checked('comment_dont_show_owner_ip') && $comment->user_id != 1)) {
+            $ip = pk_get_ip_region_str($comment->comment_author_IP);
+            echo "<span class='mt10' title='IP'><i class='fa-solid fa-location-dot'></i>&nbsp;$ip</span>";
+        }
+    }
+
     echo '          </div>
                 </div>
             </div>

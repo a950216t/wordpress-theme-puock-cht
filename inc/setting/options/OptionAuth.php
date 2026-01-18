@@ -211,21 +211,21 @@ class OptionAuth extends BaseOptionItem
                 ],
                 [
                     'id' => '-',
-                    'label' => 'LinuxDO ' . __('登录配置', PUOCK),
+                    'label' => 'LinuxDO ' . __('登入配置', PUOCK),
                     'type' => 'panel',
                     'open' => pk_is_checked('oauth_linuxdo'),
-                    'tips' => '<a target="_blank" href="https://connect.linux.do">' . __('申请步骤及说明', PUOCK) . '</a>',
+                    'tips' => '<a target="_blank" href="https://connect.linux.do">' . __('申請步驟及說明', PUOCK) . '</a>',
                     'children' => [
                         [
                             'id' => '-',
-                            'label' => __('第三方登录回调地址提示', PUOCK),
+                            'label' => __('第三方登入回檔地址提示', PUOCK),
                             'type' => 'info',
                             'infoType' => 'info',
-                            'tips' => '通用回调地址（callback url）为: <code>' . PUOCK_ABS_URI . '/inc/oauth/callback/linuxdo.php</code>'
+                            'tips' => '通用回檔地址（callback url）為: <code>' . PUOCK_ABS_URI . '/inc/oauth/callback/linuxdo.php</code>'
                         ],
                         [
                             'id' => 'oauth_linuxdo',
-                            'label' => 'LinuxDO ' . __('登录', PUOCK),
+                            'label' => 'LinuxDO ' . __('登入', PUOCK),
                             'type' => 'switch',
                             'sdt' => 'false',
                         ],
@@ -240,6 +240,73 @@ class OptionAuth extends BaseOptionItem
                             'label' => 'LinuxDO Client Secret',
                             'sdt' => '',
                             'showRefId' => 'oauth_linuxdo',
+                        ],
+                    ]
+                ],
+                [
+                    'id' => '-',
+                    'label' => '彩虹聚合登入 ' . __('登入配置', PUOCK),
+                    'type' => 'panel',
+                    'open' => pk_is_checked('oauth_ccy'),
+                    'tips' => '<a target="_blank" href="https://u.cccyun.cc/doc.php">' . __('申請步驟及說明', PUOCK) . '</a>',
+                    'children' => [
+                        [
+                            'id' => '-',
+                            'label' => __('第三方登入回檔地址提示', PUOCK),
+                            'type' => 'info',
+                            'infoType' => 'info',
+                            'tips' => '回檔功能變數名稱為: <code>' . str_replace(['http://','https://'],'',home_url()) . '</code>'
+                        ],
+                        [
+                            'id' => 'oauth_ccy',
+                            'label' => '彩虹聚合登入 ' . __('登入', PUOCK),
+                            'type' => 'switch',
+                            'sdt' => 'false',
+                        ],
+                        [
+                            'id' => 'oauth_ccy_api',
+                            'label' => __('介面位址', PUOCK),
+                            'tips' => __('彩虹聚合登入介面位址（不含路徑），例如：https://u.cccyun.cc', PUOCK),
+                            'sdt' => 'https://u.cccyun.cc',
+                            'showRefId' => 'oauth_ccy',
+                        ],
+                        [
+                            'id' => 'oauth_ccy_appid',
+                            'label' => '彩虹聚合登入 AppID',
+                            'sdt' => '',
+                            'showRefId' => 'oauth_ccy',
+                        ],
+                        [
+                            'id' => 'oauth_ccy_appkey',
+                            'label' => '彩虹聚合登入 AppKey',
+                            'sdt' => '',
+                            'showRefId' => 'oauth_ccy',
+                        ],
+                        [
+                            'id' => 'oauth_ccy_types',
+                            'label' => __('自訂登入方式類型', PUOCK),
+                            'type' => 'dynamic-list',
+                            'tips' => __('每項將生成一個登入按鈕，provider key 固定首碼為：ccy_{value}', PUOCK),
+                            'sdt' => [
+                                ['label' => 'QQ', 'value' => 'qq', 'icon' => 'fa-brands fa-qq', 'color_type' => 'danger'],
+                                ['label' => '微信', 'value' => 'wx', 'icon' => 'fa-brands fa-weixin', 'color_type' => 'success'],
+                            ],
+                            'draggable' => true,
+                            'dynamicModel' => [
+                                ['id' => 'label', 'label' => __('名稱', PUOCK), 'std' => '', 'tips' => __('顯示在按鈕上的名稱', PUOCK)],
+                                ['id' => 'value', 'label' => __('對應值', PUOCK), 'std' => '', 'tips' => __('彩虹登入方式 type 值，例如 qq/wx/alipay/sina/baidu', PUOCK)],
+                                ['id' => 'icon', 'label' => __('圖示', PUOCK), 'std' => '', 'tips' => __('FontAwesome class 或圖片 URL', PUOCK)],
+                                ['id' => 'color_type', 'label' => __('主題色', PUOCK), 'std' => 'primary', 'type' => 'select', 'options' => [
+                                    ['label' => 'primary', 'value' => 'primary'],
+                                    ['label' => 'success', 'value' => 'success'],
+                                    ['label' => 'danger', 'value' => 'danger'],
+                                    ['label' => 'info', 'value' => 'info'],
+                                    ['label' => 'warning', 'value' => 'warning'],
+                                    ['label' => 'dark', 'value' => 'dark'],
+                                    ['label' => 'secondary', 'value' => 'secondary'],
+                                ]],
+                            ],
+                            'showRefId' => 'oauth_ccy',
                         ],
                     ]
                 ],

@@ -76,7 +76,7 @@ function pk_page_meta_basic()
                 "title" => "連結顯示分類目錄 ID 列表",
                 'desc' => "（僅為<b>友情連結</b>及<b>網址導航</b>模板時有效，為空則不顯示，可多選）",
                 "type" => "select",
-                'multiple'=>true,
+                'multiple' => true,
                 "options" => $link_cats
             ),
             array(
@@ -85,7 +85,7 @@ function pk_page_meta_basic()
                 "title" => "書籍顯示分類目錄 ID 列表",
                 "desc" => "（僅為<b>書籍推薦</b>模板時有效，為空則不顯示，可多選）",
                 "type" => "select",
-                'multiple'=>true,
+                'multiple' => true,
                 "options" => $link_cats
             )
         ]

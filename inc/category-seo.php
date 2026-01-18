@@ -41,7 +41,7 @@ function edit_category_seo_field($tag)
 
 add_action('category_edit_form_fields', 'edit_category_seo_field', 10, 2);
 
-// 儲存數據
+// 儲存資料
 function cat_seo_taxonomy_save_data($term_id)
 {
     if (isset($_POST['seo-cat-keywords']) && isset($_POST['seo-cat-desc'])) {

@@ -34,36 +34,36 @@ abstract class BaseOptionItem
     }
 
     /**
-     * 获取友情链接排序顺序。
+     * 取得友情連結排序順序。
      *
-     * 升序 (ASC)、降序(DESC)，默认为升序 (ASC)。
+     * 昇冪 (ASC)、降冪 (DESC)，預設為昇冪 (ASC)。
      * https://developer.wordpress.org/reference/functions/get_bookmarks/#parameters
      *
      */
     protected static function get_link_order()
     {
         return [
-            ["label" => "升序 (ASC)", "value" => "ASC"],
-            ["label" => "降序(DESC)", "value" => "DESC"]
+            ["label" => "昇冪 (ASC)", "value" => "ASC"],
+            ["label" => "降冪 (DESC)", "value" => "DESC"]
         ];
     }
 
     /**
-     * 获取友情链接排序字段。
+     * 取得友情連結排序欄位。
      *
-     * 下面仅为部分字段，所支持的全部字段请查看官方文档`orderby`部分
+     * 下面僅為部分欄位，所支援的全部欄位請查看官方文檔`orderby`部分
      * https://developer.wordpress.org/reference/functions/get_bookmarks/#parameters
      *
      */
     protected static function get_link_order_by(): array
     {
         return [
-            ["label" => "ID排序", "value" => "link_id"],
-            ["label" => "链接排序", "value" => "url"],
+            ["label" => "ID 排序", "value" => "link_id"],
+            ["label" => "連結排序", "value" => "url"],
             ["label" => "名字排序", "value" => "name"],
-            ["label" => "评级排序", "value" => "rating"],
-            ["label" => "长度排序", "value" => "length"],
-            ["label" => "随机排序", "value" => "rand"]
+            ["label" => "評級排序", "value" => "rating"],
+            ["label" => "長度排序", "value" => "length"],
+            ["label" => "隨機排序", "value" => "rand"]
         ];
     }
 

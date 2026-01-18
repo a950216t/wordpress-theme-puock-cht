@@ -454,8 +454,8 @@ body.pre-mac pre {
   user-select: none;
   position: fixed;
   left: auto;
-  right: 47px;
-  bottom: 170px;
+  right: 45px;
+  bottom: 166px;
   top: auto;
   z-index: 999;
   
@@ -468,35 +468,34 @@ body.pre-mac pre {
     
     #post-menu-state {
       border-radius: 0 10px 10px 0; // 展開時改變按鈕圓角，只保留左側圓角
-      border-right: none; // 去掉右邊框
-      left: 0; // 保持在左側
+      border-left: none; // 去掉右邊框
+      right: 0; // 保持在左側
       box-shadow: none; // 去掉陰影
       border-color: transparent; // 邊框透明
     }
   }
 
   #post-menu-state {
-    @w: 40px;
+    @w: 34px;
     position: absolute; // 使用絕對定位
     left: 0; // 按鈕位於左側
     bottom: 0; // 底部對齊
-    background-color: var(--pk-c-primary); // 使用主題色
     width: @w;
     height: @w;
-    border-radius: 10px; // 預設全圓角
+    border-radius: 4px;
     text-align: center;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    border: none; // 去掉邊框
     transition: all 0.3s ease;
-    z-index: 1001; // 確保按鈕始終在最上層
+    background-color: var(--pk-bg-box);
+    box-sizing: border-box;
+    box-shadow: 2px 2px 5px var(--pk-c-block-shadow);
+    z-index: 0; // 確保按鈕始終在最上層
     
     i {
       font-size: 16px;
-      color: #fff; // 圖示顏色為白色
       transition: all 0.3s ease;
     }
     
@@ -973,6 +972,60 @@ a:hover {
       padding-right: 7px;
     }
 
+    // 修復 3/4 列時橫向間距（odd/even 僅適用於 2 列）
+    // 4 列在 md 中斷點會變為 3 列（col-md-4），同樣需要處理
+    @media (min-width: 768px) {
+      &.col-md-4:nth-child(3n+1) {
+        padding-left: 0;
+        padding-right: 7px;
+      }
+
+      &.col-md-4:nth-child(3n+2) {
+        padding-left: 7px;
+        padding-right: 7px;
+      }
+
+      &.col-md-4:nth-child(3n) {
+        padding-left: 7px;
+        padding-right: 0;
+      }
+    }
+
+    @media (min-width: 992px) {
+      // 3 列（col-lg-4）：[L0 Rg] [Lg Rg] [Lg R0]
+      &.col-lg-4:nth-child(3n+1) {
+        padding-left: 0;
+        padding-right: 7px;
+      }
+
+      &.col-lg-4:nth-child(3n+2) {
+        padding-left: 7px;
+        padding-right: 7px;
+      }
+
+      &.col-lg-4:nth-child(3n) {
+        padding-left: 7px;
+        padding-right: 0;
+      }
+
+      // 4 列（col-lg-3）：[L0 Rg] [Lg Rg] [Lg Rg] [Lg R0]
+      &.col-lg-3:nth-child(4n+1) {
+        padding-left: 0;
+        padding-right: 7px;
+      }
+
+      &.col-lg-3:nth-child(4n+2),
+      &.col-lg-3:nth-child(4n+3) {
+        padding-left: 7px;
+        padding-right: 7px;
+      }
+
+      &.col-lg-3:nth-child(4n) {
+        padding-left: 7px;
+        padding-right: 0;
+      }
+    }
+
     .p-block {
       width: 100%;
     }
@@ -998,7 +1051,7 @@ a:hover {
   }
 }
 
-// 移動端
+// 行動端
 @media (max-width: 576px) {
   #posts {
     .post-item-card {
@@ -1886,6 +1939,7 @@ a:hover {
   position: fixed;
   right: 10px;
   bottom: 50px;
+  z-index: 999;
 
   .p-block {
     .--pk-wh(34px, 34px);
@@ -2262,27 +2316,82 @@ a:hover {
     .prod-item {
       .p-block {
         min-height: 400px;
+        position: relative;
+        padding-top: 40px;
+        padding-bottom: 20px;
+        transition: all 0.3s ease;
+
+        // 深色漸變背景遮罩，提升文字可讀性
+        &::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.7) 0%,
+            rgba(0, 0, 0, 0.5) 20%,
+            rgba(0, 0, 0, 0.3) 50%,
+            rgba(20, 20, 20, 0.4) 80%,
+            rgba(40, 40, 40, 0.5) 100%);
+          z-index: 1;
+          transition: background 0.3s ease;
+        }
+
+        // 懸停時增強遮罩效果
+        &:hover::before {
+          background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.75) 0%,
+            rgba(0, 0, 0, 0.6) 25%,
+            rgba(0, 0, 0, 0.4) 50%,
+            rgba(20, 20, 20, 0.5) 75%,
+            rgba(40, 40, 40, 0.6) 100%);
+        }
+
+        // 確保文字在遮罩層之上
+        a, .go, .desc {
+          position: relative;
+          z-index: 2;
+        }
       }
 
       margin-top: 60px;
 
       a {
-        color: var(--pk-c-font);
+        color: #ffffff !important;
         transition: all .3s;
       }
 
       .go {
-        color: var(--pk-c-font);
+        color: #ffffff !important;
         margin-top: 30px;
         text-align: center;
         font-size: @title-font-size;
+        font-weight: bold;
+        // 添加文字陰影增強可讀性
+        text-shadow:
+          -1px -1px 0 #000,
+          1px -1px 0 #000,
+          -1px 1px 0 #000,
+          1px 1px 0 #000,
+          0 0 6px rgba(0, 0, 0, 0.9),
+          0 0 10px rgba(0, 0, 0, 0.7);
       }
 
       .desc {
-        color: var(--pk-c-font);
+        color: #f5f5f5 !important;
         font-size: @desc-font-size;
         margin-bottom: 0;
         text-align: center;
+        line-height: 1.5;
+        // 添加文字陰影增強可讀性
+        text-shadow:
+          -0.5px -0.5px 0 #000,
+          0.5px -0.5px 0 #000,
+          -0.5px 0.5px 0 #000,
+          0.5px 0.5px 0 #000,
+          0 0 5px rgba(0, 0, 0, 0.8);
       }
     }
   }

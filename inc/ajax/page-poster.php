@@ -7,11 +7,11 @@ function pk_poster_page_callback()
 {
     $id = $_REQUEST['id'];
     if (empty($id)) {
-        wp_die('無效的文章 ID：' . $id);
+        wp_die(sprintf(__('無效的文章 ID: %s', PUOCK), $id));
     }
     $post = get_post($id);
     if (empty($post)) {
-        wp_die('無效的文章 ID：' . $id);
+        wp_die(sprintf(__('無效的文章 ID: %s', PUOCK), $id));
     }
     setup_postdata($post);
     $title = get_the_title($post);
@@ -35,7 +35,7 @@ function pk_poster_page_callback()
                         <p class="tip c-sub fs14">@<?php echo pk_get_web_title() ?></p>
                     <?php endif; ?>
                 </div>
-                <p class="tip c-sub fs12 mt20 p-flex-center"><i class="fa-solid fa-qrcode"></i>&nbsp;長按識別 QRCode 檢視文章內容</p>
+                <p class="tip c-sub fs12 mt20 p-flex-center"><i class="fa-solid fa-qrcode"></i>&nbsp;<?php _e('長按識別 QRCode 檢視文章內容', PUOCK) ?></p>
             </div>
         </div>
     </div>
@@ -44,20 +44,71 @@ function pk_poster_page_callback()
     <!--    </div>-->
     <script>
         $(function () {
-            const i = window.Puock.startLoading();
-            html2canvas(document.querySelector("#<?php echo $el_id; ?>"), {
-                allowTaint: true,
-                useCORS: true,
-                backgroundColor:'#ffffff'
-            }).then(canvas => {
-                const el = $("#<?php echo $el_id; ?>");
-                el.show();
-                el.html("<img class='result' src='" + canvas.toDataURL("image/png") + "' alt='<?php echo $title ?>'>");
-                window.Puock.stopLoading(i);
-            }).catch(err => {
-                console.error(err)
-                window.Puock.toast("產生海報失敗，請到 Console 檢視錯誤資訊", TYPE_DANGER);
-            });
+            const loadingId = window.Puock.startLoading();
+            const rootSelector = "#<?php echo $el_id; ?>";
+            const rootEl = document.querySelector(rootSelector);
+
+            const waitForImages = (node) => {
+                if (!node) return Promise.resolve();
+                const imgs = Array.from(node.querySelectorAll('img'));
+                // 預先設定 crossOrigin，避免已載入的圖片污染 canvas
+                imgs.forEach(img => {
+                    if (!img.crossOrigin) img.crossOrigin = 'anonymous';
+                });
+                const tasks = imgs.map(img => img.complete ? Promise.resolve() : new Promise(resolve => {
+                    img.addEventListener('load', resolve, {once: true});
+                    img.addEventListener('error', resolve, {once: true});
+                }));
+                return Promise.all(tasks);
+            };
+
+            const waitForFonts = async () => {
+                if (document.fonts && document.fonts.ready) {
+                    await document.fonts.ready;
+                }
+                // 字型 ready 後再給一點緩衝，避免字型 fallback -> 目標字型切換時的佈局抖動
+                await new Promise(resolve => setTimeout(resolve, 150));
+            };
+
+            const settleLayout = async () => {
+                // 兩幀保證最新佈局
+                await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+                // 再小延時，等字型重排完成
+                await new Promise(resolve => setTimeout(resolve, 80));
+            };
+
+            (async () => {
+                try {
+                    if (!rootEl) {
+                        throw new Error('未找到海報容器');
+                    }
+
+                    await Promise.all([waitForImages(rootEl), waitForFonts()]);
+
+                    // 確保佈局穩定後再截圖（圖片、字型、佈局都穩定）
+                    await settleLayout();
+
+                    const canvas = await html2canvas(rootEl, {
+                        allowTaint: true,
+                        useCORS: true,
+                        backgroundColor: '#ffffff',
+                        scale: window.devicePixelRatio || 2,
+                        letterRendering: true,
+                        logging: false,
+                        scrollX: 0,
+                        scrollY: 0
+                    });
+
+                    const $root = $(rootSelector);
+                    $root.show();
+                    $root.html("<img class='result' src='" + canvas.toDataURL("image/png") + "' alt='<?php echo $title ?>'>");
+                } catch (err) {
+                    console.error(err);
+                    window.Puock.toast("產生海報失敗，請到 Console 檢視錯誤資訊", TYPE_DANGER);
+                } finally {
+                    window.Puock.stopLoading(loadingId);
+                }
+            })();
         })
     </script>
     <?php

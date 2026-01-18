@@ -71,7 +71,7 @@ class OptionResource extends BaseOptionItem{
                 ],
                 [
                     'id' => 'update_server_check_period',
-                    'label' => __('主題更新檢測頻率', PUOCK),
+                    'label' => __('主題更新偵測頻率', PUOCK),
                     'type' => 'number',
                     'sdt' => 6,
                     'tips'=>__('單位為小時', PUOCK),

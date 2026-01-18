@@ -16,14 +16,14 @@ class OptionDebug extends BaseOptionItem{
                     'label' => __('顯示 SQL 查詢統計', PUOCK),
                     'type' => 'switch',
                     'sdt' => 'false',
-                    'tips'=>__('此數據會顯示在<code>console</code>，需<code>F12</code>打開控制臺檢視', PUOCK),
+                    'tips'=>__('此資料會顯示在<code>console</code>，需<code>F12</code>打開控制臺檢視', PUOCK),
                 ],
                 [
                     'id' => 'debug_sql_detail',
                     'label' => __('顯示 SQL 查詢詳情', PUOCK),
                     'type' => 'switch',
                     'sdt' => 'false',
-                    'tips'=>__("此數據會顯示在<code>console</code>，需<code>F12</code>打開控制臺檢視，需要在<code>wp-config.php</code>中加入<code>define('SAVEQUERIES', true);</code>", PUOCK)
+                    'tips'=>__("此資料會顯示在<code>console</code>，需<code>F12</code>打開控制臺檢視，需要在<code>wp-config.php</code>中加入<code>define('SAVEQUERIES', true);</code>", PUOCK)
                 ],
             ],
         ];

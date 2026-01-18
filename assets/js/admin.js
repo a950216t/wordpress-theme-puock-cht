@@ -35,7 +35,30 @@ jQuery(function () {
         const _this = $(this)
         const key = _this.attr("data-key")
         const attrStr = _this.attr("data-attr")
-        const content = _this.attr("data-content")
+        const defaultContent = _this.attr("data-content")
+        
+        // 嘗試取得編輯器選中的文字
+        let selectedText = '';
+        
+        // 先嘗試從視覺化編輯器取得
+        if (typeof tinymce !== 'undefined' && tinymce.activeEditor) {
+            const editor = tinymce.activeEditor;
+            if (editor && !editor.hidden) {
+                selectedText = editor.selection.getContent({format: 'text'});
+            }
+        }
+        
+        // 如果視覺化編輯器沒取得到，嘗試從文字編輯器取得
+        if (!selectedText && typeof wpActiveEditor !== 'undefined' && wpActiveEditor) {
+            const textarea = document.getElementById(wpActiveEditor);
+            if (textarea && textarea.selectionStart !== textarea.selectionEnd) {
+                selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+            }
+        }
+        
+        // 如果有選中內容，使用選中文字；否則使用預設內容
+        const content = selectedText.trim() || defaultContent;
+        
         let out = `[${key}`
         if (attrStr) {
             const attr = JSON.parse(attrStr)

@@ -60,8 +60,8 @@ class PuockSetting
     public function __wp_reg_menu()
     {
         add_menu_page(
-            __('Puock 主題配置', PUOCK),
-            __('Puock 主題配置', PUOCK),
+            __('Puock 主題組態', PUOCK),
+            __('Puock 主題組態', PUOCK),
             "manage_options",
             "puock-options",
             array($this, 'setting_page'),
@@ -82,5 +82,49 @@ class PuockSetting
         }
         do_action('pk_get_theme_option_fields', $fields);
         require_once dirname(__FILE__) . '/template.php';
+    }
+
+    /**
+     * 從欄位定義中提取預設值
+     *
+     * @return array
+     */
+    public function get_default_options(): array
+    {
+        $menus = $this->option_menus_register();
+        $defaults = [];
+        foreach ($menus as $menu) {
+            $f = (new $menu['class']())->get_fields();
+            $f = apply_filters('pk_load_theme_option_fields_' . $f['key'], $f);
+            if (isset($f['fields']) && is_array($f['fields'])) {
+                $this->extract_defaults_from_fields($f['fields'], $defaults);
+            }
+        }
+        return $defaults;
+    }
+
+    /**
+     * 遞迴提取欄位預設值
+     *
+     * @param array $fields 欄位陣列
+     * @param array $defaults 預設值陣列（引用傳遞）
+     * @return void
+     */
+    private function extract_defaults_from_fields(array $fields, array &$defaults): void
+    {
+        foreach ($fields as $field) {
+            // 如果欄位有 id 和 sdt（預設值），則提取
+            if (isset($field['id']) && array_key_exists('sdt', $field)) {
+                $defaults[$field['id']] = $field['sdt'];
+            }
+            // 遞迴處理子欄位（如 panel 類型）
+            if (isset($field['children']) && is_array($field['children'])) {
+                $this->extract_defaults_from_fields($field['children'], $defaults);
+            }
+            // 處理嵌套的 fields
+            if (isset($field['fields']) && is_array($field['fields'])) {
+                $this->extract_defaults_from_fields($field['fields'], $defaults);
+            }
+        }
     }
 }

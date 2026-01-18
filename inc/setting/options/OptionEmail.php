@@ -16,7 +16,7 @@ class OptionEmail extends BaseOptionItem{
                     'label' => __('開啟 SMTP', PUOCK),
                     'type' => 'switch',
                     'sdt' => 'false',
-                    'tips'=>__('開啟會覆蓋 WordPress 預設配置', PUOCK),
+                    'tips'=>__('開啟會覆蓋 WordPress 預設組態', PUOCK),
                 ],
                 [
                     'id' => 'smtp_ssl',

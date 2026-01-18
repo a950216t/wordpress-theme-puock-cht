@@ -99,6 +99,7 @@
 ## 文件
 
 - 主題使用文件：[立即使用](https://www.licoy.cn/puock-doc.html)
+- **功能使用指南：[檢視詳細教學](./USAGE.md)** （友情連結、提示框等功能的詳細使用說明）
 - 建議或 BUG 反饋：[立即進入](https://github.com/Licoy/wordpress-theme-puock/issues)
 - QQ / 微信交流群：[點我加入](https://licoy.cn/go/puock-update.php?r=qq_qun) （此群皆為大家提供交流使用的地方，有 BUG 請直接提交 ISSUE）
 - **若您有任何建議或 BUG 發現，並且您也有解決或實現的思路，歡迎直接提交 PR！**
@@ -114,8 +115,6 @@
 ## 鳴謝
 
 - [Jetbrains](https://www.jetbrains.com/?from=wordpress-theme-puock)
-- [Cloudflare](https://www.cloudflare.com/?from=wordpress-theme-puock)
-- <a href="http://idc.daozhiyun.cn"><img src="https://sv.png.pub/imgs/2024/06/26/fd4efab4bfd2bb9e.png" width="100"></a>
 
 ## 開源協議
 

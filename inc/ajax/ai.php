@@ -11,18 +11,18 @@ function pk_openai_token_len($text): int
 function pk_ajax_ai_ask()
 {
     if (!pk_is_checked('ai_chat_enable')) {
-        wp_die('<code>未啟用 AI 助手</code>');
+        wp_die('<code>' . __('未啟用 AI 助手', PUOCK) . '</code>');
     }
     $uid = get_current_user_id();
     if (!$uid && !pk_is_checked('ai_guest_use')) {
-        wp_die('<code>遊客不允許使用 AI 助手</code>');
+        wp_die('<code>' . __('遊客不允許使用 AI 助手', PUOCK) . '</code>');
     }
     $json_body = file_get_contents('php://input');
     $body = json_decode($json_body, true);
     $text = $body['text'] ?? '';
     $model = $body['model'] ?? '';
     if (empty($text)) {
-        wp_die('<code>請輸入描述</code>');
+        wp_die('<code>' . __('請輸入描述', PUOCK) . '</code>');
     }
     $ai_platform = pk_get_option('ai_chat_platform','gptnb');
     switch ($ai_platform){
@@ -32,14 +32,14 @@ function pk_ajax_ai_ask()
     }
     $openai_api_key = pk_get_option('ai_chat_key');
     if (empty($openai_api_key)) {
-        wp_die('<code>請先配置 OpenAI API Key</code>');
+        wp_die('<code>' . __('請先設定 OpenAI API Key', PUOCK) . '</code>');
     }
     $openaiClient = new OpenAi($openai_api_key);
     $openaiClient->setBaseURL($openai_url);
     $use_img_mode = $body['imgMode'] ?? false;
     if ($use_img_mode) {
         if (!pk_is_checked('ai_draw_dall_e')) {
-            wp_die('<code>暫未啟用 AI 繪圖</code>');
+            wp_die('<code>' . __('暫未啟用 AI 繪圖', PUOCK) . '</code>');
         }
         try {
             $chat_res = $openaiClient->image([
@@ -51,12 +51,12 @@ function pk_ajax_ai_ask()
             ]);
             $res = json_decode($chat_res);
             if (!$res) {
-                wp_die('<code>AI 繪圖失敗：解析響應錯誤</code>');
+                wp_die('<code>' . __('AI 繪圖失敗：解析響應錯誤', PUOCK) . '</code>');
             }
             $answer = $res->data[0]->url;
             wp_die('![img](' . $answer . ')');
         } catch (Exception $e) {
-            wp_die('<code>AI 繪圖失敗：' . $e->getMessage() . '</code>');
+            wp_die('<code>' . sprintf(__('AI 繪圖失敗：%s', PUOCK), $e->getMessage()) . '</code>');
         }
     }
     $use_stream = pk_is_checked('ai_chat_stream');
@@ -99,17 +99,17 @@ function pk_ajax_ai_ask()
             $chat_res = $openaiClient->chat($args);
             $res = json_decode($chat_res);
             if (!$res) {
-                wp_die('<code>AI 問答解析：' . $chat_res . '</code>');
+                wp_die('<code>' . sprintf(__('AI 問答解析：%s', PUOCK), $chat_res) . '</code>');
             }
             if (isset($res->error)) {
-                wp_die('<code>AI 問答異常：' . $res->error . '</code>');
+                wp_die('<code>' . sprintf(__('AI 問答異常：%s', PUOCK), $res->error) . '</code>');
             }
             $answer = $res->choices[0]->message->content;
             echo $answer;
         }
         wp_die();
     } catch (Exception $e) {
-        wp_die('<code>AI 問答出錯：' . $e->getMessage() . '</code>');
+        wp_die('<code>' . sprintf(__('AI 問答出錯：%s', PUOCK), $e->getMessage()) . '</code>');
     }
 }
 

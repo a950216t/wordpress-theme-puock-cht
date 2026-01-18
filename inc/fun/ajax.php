@@ -1,9 +1,10 @@
 <?php
 
-function pk_ajax_url($action,$args=[]){
-    $url = admin_url('admin-ajax.php?action='.$action);
-    if(!empty($args)){
-        $url .= '&'.http_build_query($args);
+function pk_ajax_url($action, $args = [])
+{
+    $url = admin_url('admin-ajax.php?action=' . $action);
+    if (!empty($args)) {
+        $url .= '&' . http_build_query($args);
     }
     return $url;
 }
@@ -32,6 +33,7 @@ function pk_ajax_result_page($success = true, $info = '', $from_redirect = '')
 {
     if ($success && !empty($from_redirect)) {
         wp_redirect($from_redirect);
+        exit;
     } else {
         pk_session_call(function () use ($info) {
             $_SESSION['error_info'] = $info;
@@ -68,3 +70,43 @@ function pk_ajax_update_theme_options()
 }
 
 pk_ajax_register('update_theme_options', 'pk_ajax_update_theme_options');
+
+/**
+ * 取得主題設定預設值
+ */
+function pk_ajax_get_theme_options_defaults()
+{
+    if (current_user_can('edit_theme_options')) {
+        $setting = new \Puock\Theme\setting\PuockSetting();
+        $defaults = $setting->get_default_options();
+        wp_send_json_success([
+            'defaults' => $defaults,
+        ]);
+    } else {
+        wp_send_json_error(__('許可權不足', PUOCK));
+    }
+}
+
+pk_ajax_register('get_theme_options_defaults', 'pk_ajax_get_theme_options_defaults');
+
+/**
+ * 重設主題設定為預設值
+ */
+function pk_ajax_reset_theme_options()
+{
+    if (current_user_can('edit_theme_options')) {
+        $setting = new \Puock\Theme\setting\PuockSetting();
+        $defaults = $setting->get_default_options();
+        update_option(PUOCK_OPT, $defaults);
+        do_action('pk_option_updated', $defaults);
+        flush_rewrite_rules();
+        wp_send_json_success([
+            'message' => __('設定已重設為預設值', PUOCK),
+            'data' => $defaults,
+        ]);
+    } else {
+        wp_send_json_error(__('許可權不足', PUOCK));
+    }
+}
+
+pk_ajax_register('reset_theme_options', 'pk_ajax_reset_theme_options');

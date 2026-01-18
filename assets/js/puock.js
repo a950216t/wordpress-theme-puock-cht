@@ -80,6 +80,7 @@ class Puock {
         this.eventOpenCommentBox()
         this.eventCloseCommentBox()
         this.eventSendPostLike()
+        this.eventLoadMore()
         this.eventPostMainBoxResize()
         this.swiperOnceEvent()
         this.initModalToggle()
@@ -264,7 +265,11 @@ class Puock {
     }
 
     goUrl(url) {
-        if (this.data.params.is_pjax) {
+        const bypassPjax = (
+            url.indexOf('/wp-login.php') !== -1 ||
+            url.indexOf('/wp-admin') !== -1
+        );
+        if (this.data.params.is_pjax && !bypassPjax) {
             InstantClick.go(url)
         } else {
             window.location.href = url
@@ -489,11 +494,11 @@ class Puock {
         });
         cp.on("success", (e) => {
             let name = $(e.trigger).attr('data-cp-title') || "";
-            this.toast(`複製${name}成功`)
+            this.toast(`複製 ${name} 成功`)
         })
         cp.on("error", (e) => {
             let name = $(e.trigger).attr('data-cp-title') || "";
-            this.toast(`複製${name}失敗`, TYPE_DANGER)
+            this.toast(`複製 ${name} 失敗`, TYPE_DANGER)
         })
         this.lazyLoadInit()
         $('#post-main, #sidebar').theiaStickySidebar({
@@ -968,6 +973,41 @@ class Puock {
         })
     }
 
+    eventLoadMore() {
+        $(document).on("click", "#load-more-btn", (e) => {
+            const btn = $(this.ct(e));
+            const paged = btn.data("paged");
+            const postsContainer = $("#posts > div:first");
+
+            btn.prop("disabled", true).html('<i class="fa fa-spinner fa-spin"></i> 載入中...');
+
+            $.post("/wp-admin/admin-ajax.php", {action: 'pk_load_more_posts', paged: paged}, (res) => {
+                if (res.code === 0) {
+                    const newPosts = $(res.data.html);
+                    newPosts.hide();
+                    postsContainer.append(newPosts);
+                    newPosts.fadeIn();
+                    btn.data("paged", res.data.paged);
+
+                    if (!res.data.has_more) {
+                        btn.remove();
+                    } else {
+                        btn.prop("disabled", false).html('<i class="fa fa-plus"></i> 載入更多');
+                    }
+
+                    this.lazyLoadInit(newPosts);
+                    this.tooltipInit(newPosts.find("[data-bs-toggle=\"tooltip\"]"));
+                } else {
+                    this.toast(res.msg || '載入失敗', TYPE_DANGER);
+                    btn.prop("disabled", false).html('<i class="fa fa-plus"></i> 載入更多');
+                }
+            }, 'json').fail(() => {
+                this.toast('載入異常', TYPE_DANGER);
+                btn.prop("disabled", false).html('<i class="fa fa-plus"></i> 載入更多');
+            })
+        })
+    }
+
     eventSmiley() {
         $(document).on('click', '.smiley-img', (e) => {
             const comment = $("#comment");
@@ -998,7 +1038,7 @@ class Puock {
             error: (err)=> {
                 console.error(err)
                 this.stopLoading(loading)
-                this.toast("獲取內容節點數據失敗", TYPE_DANGER)
+                this.toast("取得內容節點資料失敗", TYPE_DANGER)
             }
         })
     }

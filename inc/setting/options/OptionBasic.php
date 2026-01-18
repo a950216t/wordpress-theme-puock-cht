@@ -13,6 +13,14 @@ class OptionBasic extends BaseOptionItem
             'icon' => 'dashicons-admin-generic',
             'fields' => [
                 [
+                    'id' => 'mobile_sidebar_enable',
+                    'label' => __('移動端側邊欄啟用', PUOCK),
+                    'type' => 'switch',
+                    'sdt' => 'false',
+                    'badge' => ['value' => 'New'],
+                    'tips' => __('開啟後，移動端將顯示側邊欄按鈕', PUOCK)
+                ],
+                [
                     'id' => 'basic_img_lazy_s',
                     'label' => __('圖片懶載入', PUOCK),
                     'type' => 'switch',
@@ -167,12 +175,20 @@ class OptionBasic extends BaseOptionItem
                             'type' => 'switch',
                             'sdt' => false,
                         ],
+                        [
+                            'id' => 'comment_duplicate_check',
+                            'label' => __('啟用重複評論檢測', PUOCK),
+                            'type' => 'switch',
+                            'sdt' => false,
+                            'tips' => __('開啟後將禁止使用者發表完全相同的評論內容。關閉後使用者可以傳送重複的簡短回覆（如「謝謝」），推薦關閉以提升使用者體驗', PUOCK),
+                        ],
                     ]
                 ],
                 [
                     'id' => 'post_poster_open',
                     'label' => __('文章海報產生', PUOCK),
-                    'tips' => __('使用此功能如果出現圖片無法產生，請檢查圖片是否符合跨域要求', PUOCK),
+                    'tips' => __('使用此功能如果出現圖片無法產生，請檢查圖片是否符合跨域要求；若網站 logo 不顯示，請將 logo 上傳到媒體庫並使用媒體庫中的 logo 連結', PUOCK),
+
                     'type' => 'switch',
                     'sdt' => false,
                 ],
@@ -209,15 +225,15 @@ class OptionBasic extends BaseOptionItem
                 ],
                 [
                     'id' => 'index_link_order_by',
-                    'label' => __('首页友情链接排序字段', PUOCK),
-                    'tips' => __('根据链接字段进行排序，缺省默认值为ID排序', PUOCK),
+                    'label' => __('首頁友情連結排序欄位', PUOCK),
+                    'tips' => __('根據連結欄位進行排序，缺省預設值為ID排序', PUOCK),
                     'type' => 'select',
                     'options' => self::get_link_order_by(),
                 ],
                 [
                     'id' => 'index_link_order',
-                    'label' => __('首页友情链接排序顺序', PUOCK),
-                    'tips' => __('缺省默认值为升序 (ASC)', PUOCK),
+                    'label' => __('首頁友情連結排序順序', PUOCK),
+                    'tips' => __('缺省預設值為昇冪 (ASC)', PUOCK),
                     'type' => 'select',
                     'options' => self::get_link_order(),
                 ],

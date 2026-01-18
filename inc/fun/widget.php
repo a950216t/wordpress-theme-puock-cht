@@ -2,15 +2,15 @@
 
 abstract class puockWidgetBase extends WP_Widget{
 
-    public static $puock = 'Puock 主題';
+    public static $puock = 'Puock';
 
-    protected $title = "標題";
+    protected $title = "";
 
-    protected $pre_title = '顯示近期的';
+    protected $pre_title = '';
 
     function __construct() {
-        WP_Widget::__construct($this->get_class_name(), self::$puock." ".$this->title,
-            array('description' => $this->pre_title.$this->title));
+        WP_Widget::__construct($this->get_class_name(), self::$puock." ".__($this->title, PUOCK),
+            array('description' => __($this->pre_title, PUOCK).__($this->title, PUOCK)));
     }
 
     public function html_gen($instance, $title, $key, $type='input', $showLabel=true){
@@ -26,7 +26,7 @@ abstract class puockWidgetBase extends WP_Widget{
         }
         if($type=='cats'){
             $out .= wp_dropdown_categories(array('name' => $fname,'echo'=>0,
-                'show_option_all' => '全部分類', 'hide_empty'=>0, 'hierarchical'=>1, 'selected'=>@$instance[$key]));
+                'show_option_all' => __('全部分類', PUOCK), 'hide_empty'=>0, 'hierarchical'=>1, 'selected'=>@$instance[$key]));
         }
         if($type=='text'){
             $out .= '<textarea class="monospace widefat" rows="10" cols="40" id="'.($fid).'" 
@@ -74,9 +74,9 @@ abstract class puockWidgetBase extends WP_Widget{
      * @param $instance
      */
     public function merge_common_form($instance){
-        $this->html_gen($instance, '隱藏標題', 'hide_title','checkbox',false);
-        $this->html_gen($instance, '圖示類', 'icon');
-        $this->html_gen($instance, '區塊 class 類', 'classes');
+        $this->html_gen($instance, __('隱藏標題', PUOCK), 'hide_title','checkbox',false);
+        $this->html_gen($instance, __('圖示類', PUOCK), 'icon');
+        $this->html_gen($instance, __('區塊 class 類', PUOCK), 'classes');
     }
 
     function update( $cur, $old ) {
@@ -90,7 +90,7 @@ abstract class puockWidgetBase extends WP_Widget{
         return $old;
     }
 
-    //獲取類名
+    //取得類名
     abstract function get_class_name();
 
     //是否勾選
@@ -98,7 +98,7 @@ abstract class puockWidgetBase extends WP_Widget{
         return 'on' === $val;
     }
 
-    //獲取 icon
+    //取得 icon
     public function get_icon($val,$default='fa fa-chart-simple'){
         if(!empty($val)){
             return $val;
@@ -107,7 +107,7 @@ abstract class puockWidgetBase extends WP_Widget{
     }
 
     /**
-     * 獲取公用區塊頂部程式碼
+     * 取得公用區塊頂部程式碼
      * @param $instance
      */
     public function get_common_widget_header($instance){
@@ -127,7 +127,7 @@ abstract class puockWidgetBase extends WP_Widget{
     }
 
     /**
-     * 獲取公用區塊底部程式碼
+     * 取得公用區塊底部程式碼
      * @param $instance
      */
     public function get_common_widget_footer($instance){
@@ -135,7 +135,7 @@ abstract class puockWidgetBase extends WP_Widget{
     }
 
     /**
-    * 獲取數字值
+    * 取得數字值
     * @param $instance
     * @param $key
     * @param int $default
@@ -215,11 +215,11 @@ abstract class puockWidgetBase extends WP_Widget{
     */
     public function common_post_list_form($instance,$callback=null){
         $instance = $this->default_value($instance);
-        $this->html_gen($instance, '標題', 'title');
-        $this->html_gen($instance, '顯示篇數', 'nums');
-        $this->html_gen($instance, '最近 N 天內', 'days');
-        $this->html_gen($instance, '指定分類 ID（多個 ID 之間使用「,」進行分隔）', 'categories');
-        $this->html_gen($instance, '簡潔風格', 'simple','checkbox',false);
+        $this->html_gen($instance, __('標題', PUOCK), 'title');
+        $this->html_gen($instance, __('顯示篇數', PUOCK), 'nums');
+        $this->html_gen($instance, __('最近 N 天內', PUOCK), 'days');
+        $this->html_gen($instance, __('指定分類 ID（多個 ID 之間使用「,」進行分隔）', PUOCK), 'categories');
+        $this->html_gen($instance, __('簡潔風格', PUOCK), 'simple','checkbox',false);
         if($callback){
             $callback();
         }
@@ -391,10 +391,10 @@ class puockHotCommentPost extends puockWidgetBase {
 }
 add_action( 'widgets_init', function (){ register_widget('puockHotCommentPost'); });
 
-//讀者墻
+//讀者牆
 class puockReadPerson extends puockWidgetBase {
 
-    protected $title = "讀者墻";
+    protected $title = "讀者牆";
 
     protected $pre_title = "展示網站的讀者形成";
 
@@ -405,7 +405,7 @@ class puockReadPerson extends puockWidgetBase {
 
     function get_fields(){
         return $this->merge_common_fields(array(
-            array('id'=>'title','strip'=>true, 'val'=>$this->title),
+            array('id'=>'title','strip'=>true, 'val'=>__('讀者牆', PUOCK)),
             array('id'=>'nums', 'val'=>10),
             array('id'=>'days', 'val'=>31),
         ));
@@ -413,9 +413,9 @@ class puockReadPerson extends puockWidgetBase {
 
     function form( $instance ) {
         $instance = $this->default_value($instance);
-        $this->html_gen($instance, '標題', 'title');
-        $this->html_gen($instance, '顯示數量', 'nums');
-        $this->html_gen($instance, '最近 N 天內', 'days');
+        $this->html_gen($instance, __('標題', PUOCK), 'title');
+        $this->html_gen($instance, __('顯示數量', PUOCK), 'nums');
+        $this->html_gen($instance, __('最近 N 天內', PUOCK), 'days');
         $this->merge_common_form($instance);
     }
 
@@ -469,15 +469,15 @@ class puockNewComment extends puockWidgetBase {
 
     function get_fields(){
         return $this->merge_common_fields(array(
-            array('id'=>'title','strip'=>true, 'val'=>$this->title),
+            array('id'=>'title','strip'=>true, 'val'=>__('最新評論', PUOCK)),
             array('id'=>'nums', 'val'=>10),
         ));
     }
 
     function form( $instance ) {
         $instance = $this->default_value($instance);
-        $this->html_gen($instance, '標題', 'title');
-        $this->html_gen($instance, '顯示數量', 'nums');
+        $this->html_gen($instance, __('標題', PUOCK), 'title');
+        $this->html_gen($instance, __('顯示數量', PUOCK), 'nums');
         $this->merge_common_form($instance);
     }
 
@@ -534,15 +534,15 @@ class puockStrongText extends puockWidgetBase {
 
     function get_fields(){
         return $this->merge_common_fields(array(
-            array('id'=>'title','strip'=>true, 'val'=>$this->title),
+            array('id'=>'title','strip'=>true, 'val'=>__('HTML 文字', PUOCK)),
             array('id'=>'content', 'val'=>''),
         ));
     }
 
     function form( $instance ) {
         $instance = $this->default_value($instance);
-        $this->html_gen($instance, '標題', 'title');
-        $this->html_gen($instance, '內容', 'content','text');
+        $this->html_gen($instance, __('標題', PUOCK), 'title');
+        $this->html_gen($instance, __('內容', PUOCK), 'content','text');
         $this->merge_common_form($instance);
     }
 
@@ -568,17 +568,17 @@ class puockSearch extends puockWidgetBase {
 
     function get_fields(){
         return array(
-            array('id'=>'title','strip'=>true, 'val'=>'文章搜尋'),
-            array('id'=>'pl', 'val'=>'輸入關鍵字 Enter 搜尋'),
+            array('id'=>'title','strip'=>true, 'val'=>__('文章搜尋', PUOCK)),
+            array('id'=>'pl', 'val'=>__('輸入關鍵字 Enter 搜尋', PUOCK)),
             array('id'=>'hide_title', 'val'=>0),
         );
     }
 
     function form( $instance ) {
         $instance = $this->default_value($instance);
-        $this->html_gen($instance, '標題', 'title');
-        $this->html_gen($instance, '搜尋框預留文字', 'pl');
-        $this->html_gen($instance, '隱藏標題', 'hide_title','checkbox',false);
+        $this->html_gen($instance, __('標題', PUOCK), 'title');
+        $this->html_gen($instance, __('搜尋框預留文字', PUOCK), 'pl');
+        $this->html_gen($instance, __('隱藏標題', PUOCK), 'hide_title','checkbox',false);
     }
 
     function widget( $args, $instance ){ ?>
@@ -643,7 +643,7 @@ class puockAboutAuthor extends puockWidgetBase {
 
     function get_fields(){
         return $this->merge_common_fields(array(
-            array('id'=>'title','strip'=>true, 'val'=>$this->title),
+            array('id'=>'title','strip'=>true, 'val'=>__('關於博主', PUOCK)),
             array('id'=>'name', 'val'=>get_bloginfo('name')),
             array('id'=>'email', 'val'=>get_bloginfo('admin_email')),
             array('id'=>'des', 'val'=>get_bloginfo('description')),
@@ -657,15 +657,15 @@ class puockAboutAuthor extends puockWidgetBase {
 
     function form( $instance ) {
         $instance = $this->default_value($instance);
-        $this->html_gen($instance, '標題', 'title');
-        $this->html_gen($instance, '博主名字', 'name');
-        $this->html_gen($instance, '介紹（支援 html/js）', 'des','text');
-        $this->html_gen($instance, 'E-mail（用於獲取頭像）', 'email');
-        $this->html_gen($instance, '頂部背景圖 url', 'cover');
-        $this->html_gen($instance, '顯示使用者數', 'show_users','checkbox',false);
-        $this->html_gen($instance, '顯示文章數', 'show_posts','checkbox',false);
-        $this->html_gen($instance, '顯示評論數', 'show_comments','checkbox',false);
-        $this->html_gen($instance, '顯示閱讀量', 'show_views','checkbox',false);
+        $this->html_gen($instance, __('標題', PUOCK), 'title');
+        $this->html_gen($instance, __('博主名字', PUOCK), 'name');
+        $this->html_gen($instance, __('介紹（支援 html/js）', PUOCK), 'des','text');
+        $this->html_gen($instance, __('E-mail（用於取得頭像）', PUOCK), 'email');
+        $this->html_gen($instance, __('頂部背景圖 url', PUOCK), 'cover');
+        $this->html_gen($instance, __('顯示使用者數', PUOCK), 'show_users','checkbox',false);
+        $this->html_gen($instance, __('顯示文章數', PUOCK), 'show_posts','checkbox',false);
+        $this->html_gen($instance, __('顯示評論數', PUOCK), 'show_comments','checkbox',false);
+        $this->html_gen($instance, __('顯示閱讀量', PUOCK), 'show_views','checkbox',false);
         $this->merge_common_form($instance);
     }
 
@@ -680,22 +680,22 @@ class puockAboutAuthor extends puockWidgetBase {
         $des = $instance['des'];
         $email = $instance['email'];
         $cover = $instance['cover'];
-        $show_views = $instance['show_views'] ?? 'on';
-        $show_comments = $instance['show_comments'] ?? 'on';
-        $show_posts = $instance['show_posts'] ?? 'on';
-        $show_users = $instance['show_users'] ?? 'on';
+        $show_views = isset($instance['show_views']) && $instance['show_views'] === 'on';
+        $show_comments = isset($instance['show_comments']) && $instance['show_comments'] === 'on';
+        $show_posts = isset($instance['show_posts']) && $instance['show_posts'] === 'on';
+        $show_users = isset($instance['show_users']) && $instance['show_users'] === 'on';
 
-        // 獲取評論數
+        // 取得評論數
         $comment_num = pk_cache_get(PKC_TOTAL_COMMENTS);
         if(!$comment_num){
             $comment_num = $wpdb->get_var("SELECT COUNT(comment_ID) FROM $wpdb->comments WHERE comment_approved =1");
             pk_cache_set(PKC_TOTAL_COMMENTS, $comment_num);
         }
 
-        // 獲取文章數
+        // 取得文章數
         $posts_count = wp_count_posts()->publish;
 
-        // 獲取用戶數
+        // 取得用戶數
         $users_count = count_users()['total_users'];
 
         // 計算要顯示的統計項數量
@@ -761,15 +761,15 @@ class puockCategory extends puockWidgetBase {
 
     function get_fields(){
         return $this->merge_common_fields(array(
-            array('id'=>'title','strip'=>true, 'val'=>$this->title),
+            array('id'=>'title','strip'=>true, 'val'=>__('分類目錄', PUOCK)),
             array('id'=>'categories','strip'=>true, 'val'=>''),
         ));
     }
 
     function form( $instance ) {
         $instance = $this->default_value($instance);
-        $this->html_gen($instance, '標題', 'title');
-        $this->html_gen($instance, '指定分類 ID（多個 ID 之間使用「,」進行分隔）', 'categories');
+        $this->html_gen($instance, __('標題', PUOCK), 'title');
+        $this->html_gen($instance, __('指定分類 ID（多個 ID 之間使用「,」進行分隔）', PUOCK), 'categories');
         $this->merge_common_form($instance);
     }
 
@@ -816,15 +816,17 @@ class puockTagCloud extends puockWidgetBase {
 
     function get_fields(){
         return $this->merge_common_fields(array(
-            array('id'=>'title','strip'=>true, 'val'=>$this->title),
+            array('id'=>'title','strip'=>true, 'val'=>__('標籤雲', PUOCK)),
             array('id'=>'max_count','strip'=>true, 'val'=>0),
+            array('id'=>'random_sort', 'strip'=>true, 'val'=>0),
         ));
     }
 
     function form( $instance ) {
         $instance = $this->default_value($instance);
-        $this->html_gen($instance, '標題', 'title');
-        $this->html_gen($instance, '最大顯示數量（0 為不限制）', 'max_count');
+        $this->html_gen($instance, __('標題', PUOCK), 'title');
+        $this->html_gen($instance, __('最大顯示數量（0 為不限制）', PUOCK), 'max_count');
+        $this->html_gen($instance, __('隨機顯示標籤', PUOCK), 'random_sort', 'checkbox');
         $this->merge_common_form($instance);
     }
 
@@ -841,10 +843,14 @@ class puockTagCloud extends puockWidgetBase {
     function widget( $args, $instance ){
         $this->get_common_widget_header($instance);
         echo '<div class="widget-puock-tag-cloud">';
+        $is_random_checked = isset($instance['random_sort']) && $instance['random_sort'] === 'on';
         $tags = pk_cache_get(PKC_WIDGET_TAGS);
         if(!$tags){
             $tags = get_tags();
             pk_cache_set(PKC_WIDGET_TAGS,$tags);
+        }
+        if ($is_random_checked) {
+            shuffle($tags);
         }
         $max_count = $this->get_num_val($instance, 'max_count');
         if(count($tags) > 0){
@@ -858,7 +864,7 @@ class puockTagCloud extends puockWidgetBase {
                 $count++;
             }
         }else{
-            echo "<span class='c-sub fs14'>暫無標籤</span>";
+            echo "<span class='c-sub fs14'>" . __('暫無標籤', PUOCK) . "</span>";
         }
         echo '</div>';
         $this->get_common_widget_footer($instance);
@@ -877,15 +883,15 @@ class puockTagHitokoto extends puockWidgetBase {
 
     function get_fields(){
         return $this->merge_common_fields(array(
-            array('id'=>'title','strip'=>true, 'val'=>$this->title),
+            array('id'=>'title','strip'=>true, 'val'=>__('一言一句話', PUOCK)),
             array('id'=>'api','strip'=>true, 'val'=>''),
         ));
     }
 
     function form( $instance ) {
         $instance = $this->default_value($instance);
-        $this->html_gen($instance, '標題', 'title');
-        $this->html_gen($instance, '自定義 API', 'api');
+        $this->html_gen($instance, __('標題', PUOCK), 'title');
+        $this->html_gen($instance, __('自定義 API', PUOCK), 'api');
         $this->merge_common_form($instance);
     }
 
