@@ -75,6 +75,7 @@ function deel_setup()
     //新增主題特性
     add_theme_support('post-thumbnails');//縮圖設定
     add_theme_support('post-formats', array('aside'));//增加文章形式
+    add_theme_support('title-tag');
     add_theme_support('custom-background', array(
             'default-repeat' => 'repeat',
             'default-position-x' => 'left',

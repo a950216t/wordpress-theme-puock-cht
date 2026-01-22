@@ -480,7 +480,7 @@ function pk_icon_mate() {
  */
 function pk_get_seo_title() {
     // 未啟用 SEO 返回空
-    if (!pk_is_checked('seo_open',true)) {
+    if (!pk_is_checked('seo_open',true) || defined('THE_SEO_FRAMEWORK_VERSION')) {
         return '';
     }
     // 使用者定義的連線符
@@ -734,3 +734,4 @@ if (is_admin()) {
     // 線上更新支援
     pk_update();
 }
+

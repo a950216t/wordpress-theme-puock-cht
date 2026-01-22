@@ -27,6 +27,13 @@ class OptionBasic extends BaseOptionItem
                     'sdt' => 'false',
                 ],
                 [
+                    'id' => 'lazy_placeholder_url',
+                    'label' => __('懶載入占點陣圖連結', PUOCK),
+                    'type' => 'text',
+                    'sdt' => '',
+                    'tips' => __('自訂懶載入占點陣圖 URL（留空使用主題預設占點陣圖）', PUOCK),
+                ],
+                [
                     'id' => 'basic_img_lazy_z',
                     'label' => __('正文圖片懶載入', PUOCK),
                     'type' => 'switch',
@@ -94,6 +101,13 @@ class OptionBasic extends BaseOptionItem
                     'type' => 'switch',
                     'sdt' => 'false',
                     'tips' => __('此選項為開啟快取後瀏覽量不自增問題解決方案', PUOCK)
+                ],
+                [
+                    'id' => 'view_dedupe_hours',
+                    'label' => __('瀏覽量去重複小時數', PUOCK),
+                    'type' => 'number',
+                    'sdt' => 24,
+                    'tips' => __('同一使用者在該時間視窗內重複瀏覽不計入閱讀量（0 為不去重複）', PUOCK)
                 ],
                 [
                     'id' => 'page_animate',
@@ -226,7 +240,7 @@ class OptionBasic extends BaseOptionItem
                 [
                     'id' => 'index_link_order_by',
                     'label' => __('首頁友情連結排序欄位', PUOCK),
-                    'tips' => __('根據連結欄位進行排序，缺省預設值為ID排序', PUOCK),
+                    'tips' => __('根據連結欄位進行排序，缺省預設值為 ID 排序', PUOCK),
                     'type' => 'select',
                     'options' => self::get_link_order_by(),
                 ],

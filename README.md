@@ -16,7 +16,7 @@
         <img src="https://img.shields.io/github/v/release/Licoy/wordpress-theme-puock.svg?logo=git" alt="Release-Version">
       </a>
     <a target="_blank" href="https://github.com/Licoy/wordpress-theme-puock">
-        <img src="https://img.shields.io/badge/WordPress-V5.0+-0099CC.svg?logo=wordpress" alt="WordPress-Version">
+        <img src="https://img.shields.io/badge/WordPress-V6.0+-0099CC.svg?logo=wordpress" alt="WordPress-Version">
       </a>
     <a target="_blank" href="https://github.com/Licoy/wordpress-theme-puock">
         <img src="https://img.shields.io/badge/PHP-V7.4+-666699.svg?logo=php" alt="PHP-Version">
@@ -64,10 +64,12 @@
 
 - [x] 支援白天與暗黑模式
 - [x] 全域性無重新整理載入
+- [x] 首頁載入更多
 - [x] 支援部落格、CMS、企業三種佈局
 - [x] 內建 WP 優化策略
 - [x] 內建前臺使用者中心
 - [x] 支援 QQ / Github / Gitee / 微博登入
+- [x] 支援彩虹聚合登入
 - [x] 支援縮圖偽靜態
 - [x] 全域性頂部滾動公告
 - [x] 圖形及極驗驗證碼支援
@@ -75,8 +77,10 @@
 - [x] 一鍵全站變灰
 - [x] 網頁壓縮成一行
 - [x] 後臺防惡意登入
+- [x] 自動/跟隨系統色彩模式
 - [x] 內建出色的 SEO 功能
 - [x] 評論 ajax 載入
+- [x] 閱讀時間與字數統計
 - [x] 文章點讚、打賞、海報產生、分享
 - [x] Twemoji 整合
 - [x] 豐富的廣告位
@@ -88,10 +92,17 @@
 - [x] 仿 MacOS 的程式碼風格及拷貝程式碼
 - [x] Vue3 + NaiveUI 整合的高顏值後臺配置
 - [x] 文章多級目錄產生
+- [x] 目錄多級展開
 - [x] 側邊欄粘性滾動
+- [x] 移動端側邊欄
 - [x] WP 快取支援
 - [x] 自定義主色調
 - [x] LOGO 掃光動畫
+- [x] 骨架畫面載入
+- [x] 圖片 / 頭像懶載入
+- [x] 前臺登入 / 註冊 / 找回密碼
+- [x] 主題設定重設
+- [x] 用戶中心第三方帳號綁定
 - [x] ChatGPT 及 AI 繪畫支援
 - [x] 更多特性更新請查閱版本發佈說明：[releases](https://github.com/Licoy/wordpress-theme-puock/releases)
 - [x] 更多功能等你的[提議](https://github.com/Licoy/wordpress-theme-puock/issues)
